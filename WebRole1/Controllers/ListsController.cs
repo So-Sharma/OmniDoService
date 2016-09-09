@@ -9,7 +9,6 @@ namespace WebRole1.Controllers
 {
     public class ListsController : ApiController
     {
-        // GET: api/lists
         [Route("api/lists")]
         public async Task<IHttpActionResult> Get()
         {
@@ -27,13 +26,13 @@ namespace WebRole1.Controllers
             return Ok(todoLists);
         }
 
-        // GET: api/List/5
-        public string Get(int id)
+        [Route("api/lists/{listId}")]
+        public string Get(int listId)
         {
+            // TODO:
             return "value";
         }
 
-        // POST: api/Lists
         [Route("api/lists")]
         public async Task<IHttpActionResult> Post(ToDoList list)
         {
@@ -57,29 +56,30 @@ namespace WebRole1.Controllers
             return Created(string.Empty, new ToDoList((ListEntity)result.Result));
         }
 
-        // PUT: api/List/5
-        public void Put(int id, [FromBody]string value)
+        [Route("api/lists/{listId}")]
+        public void Put(int listId, [FromBody]string value)
         {
         }
 
-        // DELETE: api/List/5
         public void Delete(int id)
         {
         }
 
-        // GET: api/lists/{listId}/tasks
         [Route("api/lists/{listId}/tasks")]
         public async Task<IHttpActionResult> Get(string listId)
         {
+            // TODO:
+
             var query = new TableQuery<ListEntity>().Where(TableQuery.GenerateFilterCondition(TableStorage.PartitionKey, QueryComparisons.Equal, "1"));
 
             return Ok(new [] {"task_1", "task_2"});
         }
 
-        // GET: api/lists/{listId}/tasks
         [Route("api/lists/{listId}/tasks/{taskId}")]
         public async Task<IHttpActionResult> Get(string listId, string taskId)
         {
+            // TODO:
+
             var query = new TableQuery<ListEntity>().Where(TableQuery.GenerateFilterCondition(TableStorage.PartitionKey, QueryComparisons.Equal, "1"));
 
             return Ok("task_1");

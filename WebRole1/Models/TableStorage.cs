@@ -10,8 +10,9 @@ namespace WebRole1
     public static class TableStorage
     {
         private const string ListsTable = "Lists";
-        //private const string AuthenticationInfosTable = "AuthenticationInfos";
-        //private const string UsersTable = "Users";
+        private const string TasksTable = "Tasks";
+
+
         // Public Table Constants
         public const string PartitionKey = "PartitionKey";
         public const string RowKey = "RowKey";
@@ -21,13 +22,14 @@ namespace WebRole1
             get { return GetAzureTable(ListsTable); }
         }
 
+        
         public static void InitializeAzureTables()
         {
             foreach (
                 var table in
                     new[]
                     {
-                        ListsTable
+                        ListsTable, TasksTable
                     })
             {
                 InitializeAzureTable(table);
