@@ -9,18 +9,17 @@ namespace WebRole1.Controllers
 {
     public class ListsController : ApiController
     {
-        // GET: api/List
+        // GET: api/lists
+        [Route("api/lists")]
         public async Task<IHttpActionResult> Get()
         {
-            var query =
-           new TableQuery<ListEntity>().Where(TableQuery.GenerateFilterCondition(TableStorage.PartitionKey,
-               QueryComparisons.Equal, "1"));
+            var query = new TableQuery<ListEntity>().Where(TableQuery.GenerateFilterCondition(TableStorage.PartitionKey, QueryComparisons.Equal, "1"));
 
             var userDocumentEntities = await TableStorage.Lists.ExecuteQueryAsync(query);
 
             List<ToDoList> todoLists = new List<ToDoList>();
 
-            foreach(ListEntity entity in userDocumentEntities)
+            foreach (ListEntity entity in userDocumentEntities)
             {
                 todoLists.Add(new ToDoList(entity));
             }
@@ -35,6 +34,7 @@ namespace WebRole1.Controllers
         }
 
         // POST: api/Lists
+        [Route("api/lists")]
         public async Task<IHttpActionResult> Post(ToDoList list)
         {
             /*var user = await GetUser();
@@ -65,6 +65,24 @@ namespace WebRole1.Controllers
         // DELETE: api/List/5
         public void Delete(int id)
         {
+        }
+
+        // GET: api/lists/{listId}/tasks
+        [Route("api/lists/{listId}/tasks")]
+        public async Task<IHttpActionResult> Get(string listId)
+        {
+            var query = new TableQuery<ListEntity>().Where(TableQuery.GenerateFilterCondition(TableStorage.PartitionKey, QueryComparisons.Equal, "1"));
+
+            return Ok(new [] {"task_1", "task_2"});
+        }
+
+        // GET: api/lists/{listId}/tasks
+        [Route("api/lists/{listId}/tasks/{taskId}")]
+        public async Task<IHttpActionResult> Get(string listId, string taskId)
+        {
+            var query = new TableQuery<ListEntity>().Where(TableQuery.GenerateFilterCondition(TableStorage.PartitionKey, QueryComparisons.Equal, "1"));
+
+            return Ok("task_1");
         }
     }
 }
