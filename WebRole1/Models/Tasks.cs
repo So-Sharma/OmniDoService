@@ -7,7 +7,7 @@ using System.Web;
 
 namespace WebRole1.Models
 {
-    public class ToDoTasks
+    public class ToDoTask
     {
         [Key]
         public string Id { get; set; }
@@ -15,22 +15,22 @@ namespace WebRole1.Models
         [Required]
         public string Name { get; set; }
 
-        public ToDoTasks(TaskEntity task)
+        public ToDoTask(TaskEntity task)
         {
             this.Id = task.RowKey;
             this.Name = task.Name;
         }
 
-        public ToDoTasks()
+        public ToDoTask()
         {
         }
     }
 
     public class TaskEntity : TableEntity
     {
-        public TaskEntity(Guid listId, ToDoTasks task)
+        public TaskEntity(string listId, ToDoTask task)
         {
-            this.PartitionKey = listId.ToString();
+            this.PartitionKey = listId;
             this.RowKey = task.Id;
             this.Name = task.Name;
         }

@@ -12,7 +12,6 @@ namespace WebRole1
         private const string ListsTable = "Lists";
         private const string TasksTable = "Tasks";
 
-
         // Public Table Constants
         public const string PartitionKey = "PartitionKey";
         public const string RowKey = "RowKey";
@@ -22,7 +21,11 @@ namespace WebRole1
             get { return GetAzureTable(ListsTable); }
         }
 
-        
+        public static CloudTable Tasks
+        {
+            get { return GetAzureTable(TasksTable); }
+        }
+
         public static void InitializeAzureTables()
         {
             foreach (

@@ -33,21 +33,25 @@ namespace WebRole1.Controllers
             return "value";
         }
 
+        public async Task<bool> ifIdExists(string id)
+        {
+            var query = new TableQuery<ListEntity>().Where(TableQuery.GenerateFilterCondition(TableStorage.RowKey, QueryComparisons.Equal, id));
+            var listId = await TableStorage.Lists.ExecuteQueryAsync(query);
+
+            if (listId.Count == 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         [Route("api/lists")]
         public async Task<IHttpActionResult> Post(ToDoList list)
         {
-            /*var user = await GetUser();
-
-            if (user == null)
-            {
-                // Unexpected. User doesn't exist. Should be invalid operation as user object is not posted yet.
-                return BadRequest();
-            }*/
-
             list.Id = Guid.NewGuid().ToString();
-
-            // Ignore permission specified in the initial post.
-            //document.Permissions = new[] { new Permission(user.Phone, Role.Owner.ToString()) };
 
             var insertOperation = TableOperation.Insert(new ListEntity(list));
 
@@ -70,19 +74,52 @@ namespace WebRole1.Controllers
         {
             // TODO:
 
-            var query = new TableQuery<ListEntity>().Where(TableQuery.GenerateFilterCondition(TableStorage.PartitionKey, QueryComparisons.Equal, "1"));
+            bool idExists = await ifIdExists(listId);
 
-            return Ok(new [] {"task_1", "task_2"});
+            if (idExists)
+            {
+                var query = new TableQuery<TaskEntity>().Where(TableQuery.GenerateFilterCondition(TableStorage.PartitionKey, QueryComparisons.Equal, listId));
+
+                var userTaskEntities = await TableStorage.Tasks.ExecuteQueryAsync(query);
+
+                List<ToDoTask> todoTasks = new List<ToDoTask>();
+
+                foreach (TaskEntity entity in userTaskEntities)
+                {
+                    todoTasks.Add(new ToDoTask(entity));
+                }
+
+                return Ok(todoTasks);
+            }
+            else
+            {
+                return NotFound();
+            }
+
+            //var query = new TableQuery<ListEntity>().Where(TableQuery.GenerateFilterCondition(TableStorage.PartitionKey, QueryComparisons.Equal, "1"));
+
+            //return Ok(new [] {"task_1", "task_2"});
         }
 
-        [Route("api/lists/{listId}/tasks/{taskId}")]
-        public async Task<IHttpActionResult> Get(string listId, string taskId)
+        [Route("api/lists/{listId}/tasks")]
+        public async Task<IHttpActionResult> Post(string listId, ToDoTask task)
         {
-            // TODO:
+            bool idExists = await ifIdExists(listId);
 
-            var query = new TableQuery<ListEntity>().Where(TableQuery.GenerateFilterCondition(TableStorage.PartitionKey, QueryComparisons.Equal, "1"));
+            if (idExists)
+            {
+                task.Id = Guid.NewGuid().ToString();
 
-            return Ok("task_1");
+                var insertOperation = TableOperation.Insert(new TaskEntity(listId, task));
+
+                var result = TableStorage.Tasks.Execute(insertOperation);
+
+                return Created(string.Empty, new ToDoTask((TaskEntity)result.Result));
+            }
+            else
+            {
+                return NotFound();
+            }
         }
     }
 }
