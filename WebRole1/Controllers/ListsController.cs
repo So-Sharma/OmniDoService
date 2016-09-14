@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Microsoft.WindowsAzure.Storage.Table;
 using WebRole1.Models;
+using WebRole1;
 
 namespace WebRole1.Controllers
 {
@@ -12,7 +13,8 @@ namespace WebRole1.Controllers
         [Route("api/lists")]
         public async Task<IHttpActionResult> Get()
         {
-            var query = new TableQuery<ListEntity>().Where(TableQuery.GenerateFilterCondition(TableStorage.PartitionKey, QueryComparisons.Equal, "1"));
+            string id = OmniRequestContext.Current.id;
+            var query = new TableQuery<ListEntity>().Where(TableQuery.GenerateFilterCondition(TableStorage.PartitionKey, QueryComparisons.Equal, id));
 
             var userDocumentEntities = await TableStorage.Lists.ExecuteQueryAsync(query);
 
@@ -52,8 +54,9 @@ namespace WebRole1.Controllers
         public async Task<IHttpActionResult> Post(ToDoList list)
         {
             list.Id = Guid.NewGuid().ToString();
+            string pKey = OmniRequestContext.Current.id;
 
-            var insertOperation = TableOperation.Insert(new ListEntity(list));
+            var insertOperation = TableOperation.Insert(new ListEntity(list,pKey));
 
             var result = TableStorage.Lists.Execute(insertOperation);
 

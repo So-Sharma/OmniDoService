@@ -30,9 +30,9 @@ namespace WebRole1.Models
 
     public class ListEntity : TableEntity
     {
-        public ListEntity(ToDoList list)
+        public ListEntity(ToDoList list, string key)
         {
-            this.PartitionKey = "1";
+            this.PartitionKey = key;
             this.RowKey = list.Id;
             this.Name = list.Name;
            }
